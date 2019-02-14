@@ -1,22 +1,23 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('mysql')
+// var mysql = require('mysql')
+var db = require('../db/db');
 
-const pool = mysql.createPool({
-  connectionLimit: 10,
-  host: "a01026675-test-db.cf9zyau6meiw.us-west-2.rds.amazonaws.com",
-  user: "node",
-  password: "password",
-  database: "unplug_and_thrive"
-})
+// const pool = mysql.createPool({
+//   connectionLimit: 10,
+//   host: "a01026675-test-db.cf9zyau6meiw.us-west-2.rds.amazonaws.com",
+//   user: "node",
+//   password: "password",
+//   database: "unplug_and_thrive"
+// })
 
-function getConnection() {
-  return pool
-}
+// function db {
+//   return pool
+// }
 
 router.get("/", (req, res) => {
   const queryString = "SELECT * FROM service"
-  getConnection().query(queryString, (err, rows, fields) => {
+  db.query(queryString, (err, rows, fields) => {
       if (err) {
           console.log("Failed to query for services: " + err)
           res.sendStatus(500)
@@ -32,7 +33,7 @@ router.get("/:id", (req, res) => {
 
   const userID = req.params.id
   const queryString = "SELECT * FROM service WHERE service_id = ?"
-  getConnection().query(queryString, [userID], (err, rows, fields) => {
+  db.query(queryString, [userID], (err, rows, fields) => {
     
       if (err) {
           console.log("Failed to query for customers: " + err)
@@ -61,7 +62,7 @@ router.post('/create', (req, res) => {
   const manual_link = req.body.manual_link
 
   const queryString = "INSERT INTO service (name, provider, description, manual_link) VALUES (?, ?, ?, ?)"
-  getConnection().query(queryString, [first_name, last_name, user_name, password, address, zip_code, phone_number, email], (err, results, field) => {
+  db.query(queryString, [first_name, last_name, user_name, password, address, zip_code, phone_number, email], (err, results, field) => {
       if (err) {
           console.log("Failed to insert new service: " + err)
           res.sendStatus(500)
