@@ -46,4 +46,32 @@ router.post("/", (req, res, next) => {
     })
 })
 
+router.post("/login", (req, res, next) => {
+    const employee_id = req.body.employee_id
+    const password = req.body.password
+
+    console.log(req.body)
+
+    const queryString = "SELECT * FROM employee WHERE employee_id = ? AND password = ?"
+    getConnection().query(queryString, [employee_id, password], (err, rows, fields) => {
+        if (err) {
+            console.log("Failed to query for employee: " + err)
+            res.sendStatus(500)
+            res.end()
+            return
+        }
+
+        if (rows.length > 0) {
+            res.json({ "success": "You have successfully logged in" });
+            res.end();
+            return
+        }
+
+        res.status(500).json({ "error": "Cannot log in" })
+        res.end();
+        return
+
+    })
+})
+
 module.exports = router
