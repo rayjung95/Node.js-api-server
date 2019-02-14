@@ -27,6 +27,7 @@ router.get("/", (req, res) => {
 
       console.log("I think we fetched it")
       res.json(rows)
+      return
   })
 })
 
@@ -53,6 +54,7 @@ router.get("/:id", (req, res) => {
       console.log("I think we fetched it")
       console.log(rows);
       res.json(rows)
+      return
   })
 
   // res.end()
@@ -84,9 +86,11 @@ router.post('/create', (req, res) => {
 
       console.log("Inserted a new user with id: ", results.insertId)
       res.end()
+      return
   })
 
   res.end();
+  return
 })
 
 module.exports = router
