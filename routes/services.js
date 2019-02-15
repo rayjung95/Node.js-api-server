@@ -3,17 +3,8 @@ var router = express.Router();
 // var mysql = require('mysql')
 var db = require('../db/db');
 
-// const pool = mysql.createPool({
-//   connectionLimit: 10,
-//   host: "a01026675-test-db.cf9zyau6meiw.us-west-2.rds.amazonaws.com",
-//   user: "node",
-//   password: "password",
-//   database: "unplug_and_thrive"
-// })
-
-// function db {
-//   return pool
-// }
+// TODO: 
+// CRUD
 
 router.get("/", (req, res) => {
   const queryString = "SELECT * FROM service"
