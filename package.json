@@ -9,6 +9,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "dotenv": "^6.2.0",
     "express": "~4.16.0",
     "generate-password": "^1.4.1",
     "generator": "^1.0.1",
@@ -20,6 +21,8 @@
     "mysql": "^2.16.0",
     "nodemon": "^1.18.9",
     "npm": "^6.8.0",
-    "passport-headerapikey": "^1.1.0"
+    "passport": "^0.4.0",
+    "passport-headerapikey": "^1.1.0",
+    "passport-jwt": "^4.0.0"
   }
 }

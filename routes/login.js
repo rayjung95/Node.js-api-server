@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db/db');
 var bodyParser = require('body-parser')
+var jwt = require('jsonwebtoken')
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
@@ -22,14 +23,28 @@ router.post("/", (req, res, next) => {
         }
 
         if (rows.length > 0) {
-            res.json({ "success": "You have successfully logged in" });
+            const user = {
+                "employee_id": rows[0].employee_id,
+                "first_name": rows[0].first_name,
+                "last_name": rows[0].last_name,
+            }
+            //Getting Token
+            jwt.sign({ user }, 'secretkey', (err, token) => {
+                res.json({
+                    "success": "You have successfully logged in",
+                    token
+                })
+                console.log("Here")
+                res.end();
+                return
+            });
+
+        } else {
+            res.status(403).json({ "error": "Cannot log in" })
             res.end();
             return
-        }
 
-        res.status(500).json({ "error": "Cannot log in" })
-        res.end();
-        return
+        }
 
     })
 })
