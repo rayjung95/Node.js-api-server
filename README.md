@@ -47,11 +47,20 @@ GET http://localhost:8080/employees/{id}
   ```
 * Outputs an employee with `id` number specified
 
+**To be filled**  
+**To be filled**  
+**To be filled**  
+**To be filled**  
 
-## *To be filled*
-## *To be filled*
-## *To be filled*
-## *To be filled*
+
+
+
+## Code Quality
+
+This API's code structure and rules are based on [StandardJS](https://standardjs.com/). Please keep the integrity of the code by conforming to these rules. You can make sure that your code is acceptable by running `npm run lint`. What this does is run the command `standard --fix`. It should fix all the errors within the code that it can automatically. Errors such as: *non-camel case* variables or *variables that are initialized but never used* will have to be done manually. They are going to be in the output of the terminal.
+
+If you are using VSCode, [this extension](https://marketplace.visualstudio.com/items?itemName=chenxsan.vscode-standardjs) may be helpful for finding errors within StandardJS. Keep in mind that there are additional steps needed for it to work, which are outlined on the page of the extension.
+
 
 <!-- ## License
 [MIT](https://choosealicense.com/licenses/mit/) -->
