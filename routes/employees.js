@@ -5,7 +5,7 @@ var generator = require('generate-password')
 var db = require('../db/db');
 
 // TODO: 
-// CRUD
+// CRUD done
 
 // Get all employee
 router.get("/", (req, res) => {
@@ -71,6 +71,7 @@ router.post('/create', (req, res) => {
 		if (err) {
 			console.log("Failed to insert new user: " + err)
 			res.sendStatus(500)
+			return
 		}
 
 		console.log("Inserted a new user with id: ", results.insertId)
@@ -83,7 +84,7 @@ router.post('/create', (req, res) => {
 })
 
 // Delete Employee information
-router.delete("/:employee_id", (req, res) => {
+router.delete("/:employee_id/delete", (req, res) => {
 	const queryString = "DELETE FROM employee WHERE employee_id = ?"
 	const employee_id = req.params.employee_id
 	db.query(queryString, [employee_id], (err, rows, fields) => {
@@ -100,7 +101,7 @@ router.delete("/:employee_id", (req, res) => {
 });
 
 // Edit Employee information
-router.post("/edit/:employee_id", (req, res) => {
+router.post("/:employee_id/edit", (req, res) => {
 	const first_name = req.body.first_name
 	const last_name = req.body.last_name
 	const address = req.body.address
