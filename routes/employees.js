@@ -75,6 +75,7 @@ router.get('/:id', (req, res) => {
   // res.end()
 })
 
+// Create Employee
 router.post('/create', (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
     if (err) {

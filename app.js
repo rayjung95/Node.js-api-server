@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index')
 var employeesRouter = require('./routes/employees')
 var customersRouter = require('./routes/customers')
 var servicessRouter = require('./routes/services')
+var serviceOrderRouter = require('./routes/serviceOrder')
 var loginRouter = require('./routes/login')
 
 var app = express()
@@ -29,10 +30,21 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, XRequested-With, Content-Type,  Accept, Authorization')
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'PUT,  POST, PATCH, DELETE, GET')
+    return res.status(200).json({})
+  }
+  next()
+})
+
 app.use('/', indexRouter)
 app.use('/employees', employeesRouter)
 app.use('/customers', customersRouter)
 app.use('/services', servicessRouter)
+app.use('/serviceOrder', serviceOrderRouter)
 app.use('/login', loginRouter)
 
 // catch 404 and forward to error handler

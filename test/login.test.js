@@ -1,6 +1,5 @@
-var request = require('supertest')
-var app = require('../app')
-
+// var request = require('supertest')
+// var app = require('../app')
 
 // describe('Good Login', function () {
 //   it('gives a web token', function (done) {
