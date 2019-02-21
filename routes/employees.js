@@ -1,128 +1,115 @@
-var express = require('express');
-var router = express.Router();
-// var mysql = require('mysql')
+var express = require('express')
+var router = express.Router()
 var generator = require('generate-password')
-var db = require('../db/db');
+var db = require('../db/db')
+var jwt = require('jsonwebtoken')
 
-// TODO: 
-// CRUD done
+function verifyToken (req, res, next) {
+  // Get auth header value
+  const bearerHeader = req.headers['authorization']
+  // Check if bearer is undefined
+  if (typeof bearerHeader !== 'undefined') {
+    // Split at the space
+    const bearer = bearerHeader.split(' ')
+    // Get token from array
+    const bearerToken = bearer[1]
+    // Set the token
+    req.token = bearerToken
+    // Next middleware
+    next()
+  } else {
+    // Forbidden
+    res.sendStatus(403)
+  }
+}
 
-// Get all employee
-router.get("/", (req, res) => {
-	const queryString = "SELECT * FROM employee"
-	db.query(queryString, (err, rows, fields) => {
-		if (err) {
-			console.log("Failed to query for employees: " + err)
-			res.sendStatus(500)
-			res.end()
-			return
-		}
+router.get('/', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if (err) {
+      res.sendStatus(403)
+    } else {
+      const queryString = 'SELECT * FROM employee'
+      db.query(queryString, (err, rows, fields) => {
+        if (err) {
+          console.log('Failed to query for employees: ' + err)
+          res.sendStatus(500)
+          res.end()
+          return
+        }
 
-		console.log("I think we fetched it")
-		res.json(rows)
-		return
-	})
+        console.log('I think we fetched it')
+        res.json(rows)
+      })
+    }
+  })
 })
 
-// Get Employee by id
-router.get("/:id", (req, res) => {
-	console.log("Fetching user with id: " + req.params.id)
+router.get('/:id', (req, res) => {
+  jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if (err) {
+      res.sendStatus(403)
+    } else {
+      console.log('Fetching user with id: ' + req.params.id)
 
-	const userID = req.params.id
-	const queryString = "SELECT * FROM employee WHERE employee_id = ?"
-	db.query(queryString, [userID], (err, rows, fields) => {
+      const userID = req.params.id
+      const queryString = 'SELECT * FROM employee WHERE employee_id = ?'
+      db.query(queryString, [userID], (err, rows, fields) => {
+        if (err) {
+          console.log('Failed to query for users: ' + err)
+          res.sendStatus(500)
+          res.end()
+          return
+        }
 
-		if (err) {
-			console.log("Failed to query for users: " + err)
-			res.sendStatus(500)
-			res.end()
-			return
-		}
+        // if (rows.length != 1) {
+        //   res.json({error: "User with ID: " + userID + " not found."})
+        //   res.end()
+        // }
 
-		console.log("I think we fetched it")
-		console.log(rows[0]);
-		res.json(rows[0])
-		return
-	})
-
-	// res.end()
+        console.log('I think we fetched it')
+        console.log(rows)
+        res.json(rows)
+      })
+    }
+  })
+  // res.end()
 })
 
 // Create Employee
 router.post('/create', (req, res) => {
-	console.log("Trying to create a new user")
+  jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if (err) {
+      res.sendStatus(403)
+    } else {
+      console.log('Trying to create a new user')
 
-	const first_name = req.body.first_name
-	const last_name = req.body.last_name
-	const address = req.body.address
-	const zip_code = req.body.zip_code
-	const phone_number = req.body.phone_number.replace(/-/g, "")
-	const email = req.body.email
+      const firstName = req.body.first_name
+      const lastName = req.body.last_name
+      const address = req.body.address
+      const zipCode = req.body.zip_code
+      const phoneNumber = req.body.phone_number.replace(/-/g, '')
+      const email = req.body.email
 
-	const user_name = (first_name[0] + last_name).toLowerCase()
-	const password = generator.generate({
-		length: 10,
-		numbers: true
-	});
+      const userName = (firstName[0] + lastName).toLowerCase()
+      const password = generator.generate({
+        length: 10,
+        numbers: true
+      })
 
-	const queryString = "INSERT INTO employee (first_name, last_name, user_name, password, address, zip, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+      const queryString = 'INSERT INTO employee (first_name, last_name, user_name, password, address, zip, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
 
-	db.query(queryString, [first_name, last_name, user_name, password, address, zip_code, phone_number, email], (err, results, field) => {
-		if (err) {
-			console.log("Failed to insert new user: " + err)
-			res.sendStatus(500)
-			return
-		}
+      db.query(queryString, [firstName, lastName, userName, password, address, zipCode, phoneNumber, email], (err, results, field) => {
+        if (err) {
+          console.log('Failed to insert new user: ' + err)
+          res.sendStatus(500)
+        }
 
-		console.log("Inserted a new user with id: ", results.insertId)
-		res.end()
-		return
-	})
-
-	res.end();
-	return
+        console.log('Inserted a new user with id: ', results.insertId)
+        res.end()
+      })
+      res.end()
+    }
+  })
 })
-
-// Delete Employee information
-router.delete("/:employee_id/delete", (req, res) => {
-	const queryString = "DELETE FROM employee WHERE employee_id = ?"
-	const employee_id = req.params.employee_id
-	db.query(queryString, [employee_id], (err, rows, fields) => {
-		if (err) {
-			console.log("Failed to query for employees: " + err)
-			res.sendStatus(500)
-			res.end()
-			return
-		}
-		console.log("Employee is deleted")
-	})
-	res.sendStatus(200)
-	return
-});
-
-// Edit Employee information
-router.post("/:employee_id/edit", (req, res) => {
-	const first_name = req.body.first_name
-	const last_name = req.body.last_name
-	const address = req.body.address
-	const zip = req.body.zip
-	const phone = parseInt(req.body.phone, 10)
-	const email = req.body.email
-	const employee_id = req.body.employee_id
-
-	const queryString = "UPDATE employee SET employee_id = ?, first_name = ?, last_name = ?, address = ?, zip = ?, phone = ?, email = ? WHERE employee_id = ?"
-	console.log(queryString);
-	db.query(queryString, [employee_id, first_name, last_name, address, zip, phone, email, employee_id], (err, rows, fields) => {
-		if (err) {
-			console.log("Failed to query for employees: " + err)
-			res.sendStatus(500)
-			res.end()
-			return
-		}
-		console.log("Employee is updated")
-	})
-	res.sendStatus(200)
-	return
-});
 
 module.exports = router

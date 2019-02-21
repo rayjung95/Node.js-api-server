@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 
 // function getConnection() {
 //   return pool
@@ -7,9 +7,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Express' });
-  return
-});
+  res.render('index', { title: 'Welcome to Unplug And Thrive API' })
+})
 
-
-module.exports = router;
+module.exports = router
