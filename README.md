@@ -1,6 +1,6 @@
 # Unplug And Thrive API
 [![npm version](https://badge.fury.io/js/express.svg)](https://badge.fury.io/js/express)  
-[![Build Status](https://travis-ci.com/AJBuckle/UnplugAndThriveAPI.svg?token=xS9pAoyPyTQuATk6Sw97&branch=security)](https://travis-ci.com/AJBuckle/UnplugAndThriveAPI)  
+[![Build Status](https://travis-ci.com/AJBuckle/UnplugAndThriveAPI.svg?token=xS9pAoyPyTQuATk6Sw97&branch=master)](https://travis-ci.com/AJBuckle/UnplugAndThriveAPI) 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)  
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
