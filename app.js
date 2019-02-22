@@ -9,7 +9,7 @@ var fs = require('fs')
 var indexRouter = require('./routes/index')
 var employeesRouter = require('./routes/employees')
 var customersRouter = require('./routes/customers')
-var servicessRouter = require('./routes/services')
+var servicesRouter = require('./routes/services')
 var serviceOrderRouter = require('./routes/serviceOrder')
 var loginRouter = require('./routes/login')
 
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter)
 app.use('/employees', employeesRouter)
 app.use('/customers', customersRouter)
-app.use('/services', servicessRouter)
+app.use('/services', servicesRouter)
 app.use('/serviceOrder', serviceOrderRouter)
 app.use('/login', loginRouter)
 
