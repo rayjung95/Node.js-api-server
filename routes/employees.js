@@ -112,4 +112,30 @@ router.post('/create', (req, res) => {
   })
 })
 
+router.get('/:id/jobs', (req, res) => {
+  jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if (err) {
+      res.sendStatus(403)
+    } else {
+      console.log('Fetching user with id: ' + req.params.id)
+      // SELECT name from SERVICE WHERE service_id = ?;
+
+      const userID = req.params.id
+      const queryString = 'SELECT * from service_order WHERE employee_id = ?;'
+      db.query(queryString, [userID], (err, rows, fields) => {
+        if (err) {
+          console.log('Failed to query for service_orders: ' + err)
+          res.sendStatus(500)
+          res.end()
+          return
+        }
+        console.log('I think we fetched it')
+        console.log(rows)
+        res.json(rows)
+      })
+    }
+  })
+  // res.end()
+})
+
 module.exports = router
