@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 var express = require('express');
 var router = express.Router();
 
@@ -6,6 +7,16 @@ var router = express.Router();
 // }
 
 /* GET home page. */
+=======
+var express = require('express')
+var router = express.Router()
+/**
+ * @param  {} '/'
+ * @param  {} function(req
+ * @param  {} res
+ * @param  {} next
+ */
+>>>>>>> Stashed changes
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
   return
