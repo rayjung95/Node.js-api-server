@@ -44,7 +44,7 @@ router.get('/', verifyToken, (req, res) => {
   })
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
     if (err) {
       res.sendStatus(403)
@@ -60,12 +60,6 @@ router.get('/:id', (req, res) => {
           res.end()
           return
         }
-
-        // if (rows.length != 1) {
-        //   res.json({error: "User with ID: " + userID + " not found."})
-        //   res.end()
-        // }
-
         console.log('I think we fetched it')
         console.log(rows)
         res.json(rows)
@@ -76,7 +70,7 @@ router.get('/:id', (req, res) => {
 })
 
 // Create Employee
-router.post('/create', (req, res) => {
+router.post('/create', verifyToken, (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
     if (err) {
       res.sendStatus(403)
@@ -108,6 +102,33 @@ router.post('/create', (req, res) => {
         res.end()
       })
       res.end()
+    }
+  })
+})
+
+router.get('/welcome/:id', verifyToken, (req, res) => {
+  console.log(req.params)
+  jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403)
+    } else {
+      console.log('Fetching user with id: ' + req.params.id)
+      // SELECT name from SERVICE WHERE service_id = ?;
+
+      const userID = req.params.id
+      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order JOIN service on service_order.service_id JOIN customer on service_order.customer_id  WHERE employee_id = ?'
+      db.query(queryString, [userID], (err, rows, fields) => {
+        if (err) {
+          console.log('Failed to query for service_orders: ' + err)
+          res.sendStatus(500)
+          res.end()
+          return
+        }
+        console.log('I think we fetched it')
+        console.log(rows)
+        res.json(rows)
+      })
     }
   })
 })
