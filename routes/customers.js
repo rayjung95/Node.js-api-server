@@ -39,8 +39,8 @@ router.post('/create', (req, res) => {
   const zipCode = req.body.zip_code
   const phoneNumber = req.body.phone_number.replace(/-/g, '')
   const email = req.body.email
-
   const queryString = 'INSERT INTO customer (first_name, last_name, address, zip, phone, email) VALUES (?, ?, ?, ?, ?, ?)'
+
   db.query(queryString, [firstName, lastName, address, zipCode, phoneNumber, email], (err, results, field) => {
     if (err) {
       console.log('Failed to insert new user: ' + err)
