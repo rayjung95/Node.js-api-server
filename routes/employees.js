@@ -3,6 +3,10 @@ var router = express.Router()
 var generator = require('generate-password')
 var db = require('../db/db')
 var jwt = require('jsonwebtoken')
+/**
+ *  TODO:
+ *  Delete needs to be implemented 
+ */
 
 function verifyToken (req, res, next) {
   // Get auth header value

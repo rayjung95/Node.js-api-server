@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 var db = require('../db/db')
 
-// TODO
+// TODO:
 // CRUD done
 
 // Get all services
