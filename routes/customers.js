@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var db = require('../db/db')
 
+// UWU
 router.get('/', (req, res) => {
   const queryString = 'SELECT * FROM customer'
   db.query(queryString, (err, rows, fields) => {
