@@ -97,12 +97,13 @@ router.post('/:order_id/edit', (req, res) => {
 })
 
 // Get list of service orders that assigned to an employee
-router.get('/:employee_id', (req, res) => {
-  console.log('Fetching service with employee_id: ' + req.params.employee_id)
+router.get("/:employee_id/employee", (req, res) => {
+  console.log("Fetching service with employee_id: " + req.params.employee_id)
 
-  const employeeId = req.params.employee_id
-  const queryString = 'SELECT * FROM service_order WHERE employee_id = ?'
-  db.query(queryString, [employeeId], (err, rows, fields) => {
+  const employee_id = req.params.employee_id
+  const queryString = "SELECT * FROM service_order WHERE employee_id = ?"
+  db.query(queryString, [employee_id], (err, rows, fields) => {
+
     if (err) {
       console.log('Failed to query for customers: ' + err)
       res.sendStatus(500)
