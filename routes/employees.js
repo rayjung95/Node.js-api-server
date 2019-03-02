@@ -5,7 +5,7 @@ var db = require('../db/db')
 var jwt = require('jsonwebtoken')
 /**
  *  TODO:
- *  Delete needs to be implemented 
+ *  Delete needs to be implemented
  */
 
 function verifyToken (req, res, next) {

@@ -1,3 +1,8 @@
+/**
+ * @param  {json} req - request params
+ * @param  {json} res - response params
+ * @param  {middleware} next - next middleware to use
+ */
 function verifyToken (req, res, next) {
   // Get auth header value
   const bearerHeader = req.headers['authorization']
