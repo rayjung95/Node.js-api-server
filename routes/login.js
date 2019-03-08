@@ -3,6 +3,7 @@ var router = express.Router()
 var db = require('../db/db')
 var bodyParser = require('body-parser')
 var jwt = require('jsonwebtoken')
+var nodemailer = require('nodemailer')
 
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
@@ -45,6 +46,41 @@ router.post('/', (req, res, next) => {
       res.end()
     }
   })
+})
+
+router.post('/sendEmail',(req, res) => {
+  console.log(req.body);
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    // port: 587,
+    // secure: false, // true for 465, false for other ports
+    auth: {
+      user: 'fakeunplugandthrive@gmail.com',
+      pass: 'FakeUnplugAndThrive'
+    }
+    // tls: {
+    //   rejectUnauthorized: false
+    // }
+  });
+
+  // setup email data with unicode symbols
+  let mailOptions = {
+    from: 'fakeunplugandthrive@gmail.com', // sender address
+    to: `${req.body.email}`, // list of receivers
+    subject: `${req.body.subject}`, // Subject line
+    // text: "Hello world?", // plain text body
+    html: req.body.html// html body
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailOptions, (error, info) => {
+    if(error) {
+      return console.log(error);
+    }
+  })
+
+  res.status(200).json({ status: 200 })
 })
 
 module.exports = router
