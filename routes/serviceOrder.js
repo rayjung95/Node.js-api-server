@@ -109,12 +109,6 @@ router.get('/:employee_id/employee', (req, res) => {
       res.end()
       return
     }
-
-    // if (rows.length != 1) {
-    //   res.json({error: "User with ID: " + userID + " not found."})
-    //   res.end()
-    // }
-
     console.log('I think we fetched it')
     res.status(200).json(rows)
   })
