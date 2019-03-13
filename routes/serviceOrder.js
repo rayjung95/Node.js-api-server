@@ -74,17 +74,17 @@ router.delete('/:order_id/delete', (req, res) => {
 
 // Edit ServiceOrder information
 router.post('/:order_id/edit', (req, res) => {
-  const orderId = req.params.order_id
-  const customerId = req.body.customer_id
-  const serviceId = req.body.service_id
-  const employeeId = req.body.employee_id
-  const scheduled = req.body.scheduled
-  const description = req.body.description
-  const status = req.body.status
-  console.log(description)
+  const orderId = req.params.order_id;
+  const customerId = req.body.customer_id;
+  const serviceId = req.body.service_id;
+  const employeeId = req.body.employee_id;
+  const scheduled = req.body.scheduled;
+  const description = req.body.description;
+  const status = req.body.status;
+  console.log(description);
 
   const queryString = 'UPDATE service_order SET customer_id = ?, service_id = ?, employee_id = ?, scheduled = ?, description = ?, status = ? WHERE order_id = ? AND customer_id = ? AND service_id  = ? '
-  console.log(queryString)
+  console.log(queryString);
   db.query(queryString, [customerId, serviceId, employeeId, scheduled, description, status, orderId, customerId, serviceId], (err, rows, fields) => {
     if (err) {
       console.log('Failed to query for service: ' + err)
@@ -108,11 +108,17 @@ router.post('/:order_id/close', async (req, res) => {
     const status = req.body.status;
     const customerEmailAddress = req.body.customerEmail;
 
+    console.log(orderId);
+    console.log(openDnsUserName);
+    console.log(openDnsPassword);
+    console.log(QStudioUserName);
+    console.log(QStudioPassword);
+    console.log(status);
 
 
     const queryString = 'UPDATE service_order SET status = ?, openDnsUserName = ?, openDnsPass = ?, QStudioUserName = ?, QStudioPass = ?,  description = ? WHERE order_id = ?';
     console.log(queryString);
-    db.query(queryString, [status, openDnsUserName, openDnsPassword, QStudioUserName, QStudioPassword, description, orderId], (err, rows, fields) => {
+    await db.query(queryString, [status, openDnsUserName, openDnsPassword, QStudioUserName, QStudioPassword, description, orderId], (err, rows, fields) => {
         if (err) {
             console.log('Failed to query for service: ' + err)
             console.log(err.message);
@@ -120,25 +126,35 @@ router.post('/:order_id/close', async (req, res) => {
             res.end()
             return
         }
+        console.log(rows);
         console.log('ServiceOrder is updated');
 
-    })
-    let mailResult = await mail.sendInstallationEmail(customerEmailAddress,openDnsUserName,openDnsPassword,QStudioUserName,QStudioPassword);
-    mailResult.status==0? res.status(200).json({ status: 200 }):res.status(500).json({ status: 500, mailError:mailResult.message })
+    });
+    await mail.sendInstallationEmail(customerEmailAddress,openDnsUserName,openDnsPassword,QStudioUserName,QStudioPassword)
 
+        .then((mailResult) =>{
+            console.log("Mail Info: "+mailResult.message);
+            res.status(200).json({ status: 200 })
+        })
+
+        .catch(mailError =>{
+            console.log("Mail Error: "+mailError.message);
+            res.status(500).json({ status: 500, mailError:mailError.message })
+        })
 })
+
 
 // Get list of service orders that assigned to an employee
 router.get('/:employee_id/employee', (req, res) => {
-  console.log('Fetching service with employee_id: ' + req.params.employee_id)
+  console.log('Fetching service with employee_id: ' + req.params.employee_id);
 
-  const employeeId = req.params.employee_id
-  const queryString = 'SELECT * FROM service_order WHERE employee_id = ?'
+  const employeeId = req.params.employee_id;
+  const queryString = 'SELECT * FROM service_order WHERE employee_id = ?';
   db.query(queryString, [employeeId], (err, rows, fields) => {
     if (err) {
-      console.log('Failed to query for customers: ' + err)
-      res.sendStatus(500)
-      res.end()
+      console.log('Failed to query for customers: ' + err);
+      res.sendStatus(500);
+      res.end();
       return
     }
 
@@ -147,9 +163,9 @@ router.get('/:employee_id/employee', (req, res) => {
     //   res.end()
     // }
 
-    console.log('I think we fetched it')
+    console.log('I think we fetched it');
     res.status(200).json(rows)
   })
-})
+});
 
 module.exports = router;
