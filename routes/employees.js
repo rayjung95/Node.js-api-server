@@ -120,8 +120,9 @@ router.get('/welcome/:id', verifyToken, (req, res) => {
       console.log('Fetching user with id: ' + req.params.id)
       // SELECT name from SERVICE WHERE service_id = ?;
 
-      const userID = req.params.id
-      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order JOIN service on service_order.service_id JOIN customer on service_order.customer_id  WHERE employee_id = ?'
+      const userID = req.params.id;
+      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order INNER JOIN service on service.service_id= service_order.service_id INNER JOIN customer on customer.customer_id = service_order.customer_id  WHERE employee_id = ? AND' +
+          ' service_order.status is null'
       db.query(queryString, [userID], (err, rows, fields) => {
         if (err) {
           console.log('Failed to query for service_orders: ' + err)
@@ -130,7 +131,7 @@ router.get('/welcome/:id', verifyToken, (req, res) => {
           return
         }
         console.log('I think we fetched it')
-        console.log(rows)
+        // console.log(rows)
         res.json(rows)
       })
     }
