@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 var db = require('../db/db')
+var mail = require("./mail");
 
 // TODO:
 // CRUD done
@@ -97,25 +98,17 @@ router.post('/:order_id/edit', (req, res) => {
 })
 
 
-router.post('/:order_id/close', (req, res) => {
+router.post('/:order_id/close', async (req, res) => {
     const orderId = req.params.order_id;
-    const customerId = req.body.customer_id;
-    const serviceId = req.body.service_id;
-    const employeeId = req.body.employee_id;
-    const scheduled = req.body.scheduled;
     const description = req.body.description;
     const openDnsUserName = req.body.openDnsUserName;
     const openDnsPassword = req.body.openDnsPassword;
     const QStudioUserName = req.body.QStudioUserName;
     const QStudioPassword = req.body.QStudioPassword;
     const status = req.body.status;
-    console.log(orderId);
-    console.log(openDnsUserName)
-    console.log(openDnsPassword)
-    console.log(QStudioUserName)
-    console.log(QStudioPassword)
+    const customerEmailAddress = req.body.customerEmail;
 
-    console.log(status)
+
 
     const queryString = 'UPDATE service_order SET status = ?, openDnsUserName = ?, openDnsPass = ?, QStudioUserName = ?, QStudioPass = ?,  description = ? WHERE order_id = ?';
     console.log(queryString);
@@ -127,10 +120,14 @@ router.post('/:order_id/close', (req, res) => {
             res.end()
             return
         }
-        console.log('ServiceOrder is updated')
-        res.status(200).json({ status: 200 })
+        console.log('ServiceOrder is updated');
+
     })
+    let mailResult = await mail.sendInstallationEmail(customerEmailAddress,openDnsUserName,openDnsPassword,QStudioUserName,QStudioPassword);
+    mailResult.status==0? res.status(200).json({ status: 200 }):res.status(500).json({ status: 500, mailError:mailResult.message })
+
 })
+
 // Get list of service orders that assigned to an employee
 router.get('/:employee_id/employee', (req, res) => {
   console.log('Fetching service with employee_id: ' + req.params.employee_id)
@@ -155,4 +152,4 @@ router.get('/:employee_id/employee', (req, res) => {
   })
 })
 
-module.exports = router
+module.exports = router;
