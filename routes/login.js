@@ -48,8 +48,8 @@ router.post('/', (req, res, next) => {
   })
 })
 
-router.post('/sendEmail',(req, res) => {
-  console.log(req.body);
+router.post('/sendEmail', (req, res) => {
+  console.log(req.body)
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -71,12 +71,12 @@ router.post('/sendEmail',(req, res) => {
     subject: `${req.body.subject}`, // Subject line
     // text: "Hello world?", // plain text body
     html: req.body.html// html body
-  };
+  }
 
   // send mail with defined transport object
   transporter.sendMail(mailOptions, (error, info) => {
-    if(error) {
-      return console.log(error);
+    if (error) {
+      return console.log(error)
     }
   })
 
