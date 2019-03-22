@@ -83,7 +83,7 @@ router.put('/update/:id', verifyToken, (req, res) => {
   })
 })
 
-router.put('/create', verifyToken, (req, res) => {
+router.post('/create', verifyToken, (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
     if (err) {
       res.sendStatus(403)
@@ -93,8 +93,12 @@ router.put('/create', verifyToken, (req, res) => {
       const firstName = req.body.first_name
       const lastName = req.body.last_name
       const address = req.body.address
-      const zipCode = req.body.zip_code
-      const phoneNumber = req.body.phone_number.replace(/-/g, '')
+      const zipCode = req.body.zip
+      const phoneNumber = req.body.phone
+      if (req.body.phone.includes('-')) {
+        phoneNumber = req.body.phone.replace(/-/g, '')
+      }
+      
       const email = req.body.email
 
       const userName = (firstName[0] + lastName).toLowerCase()
