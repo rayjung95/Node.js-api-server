@@ -4,15 +4,20 @@ var db = require('../db/db')
 var bodyParser = require('body-parser')
 var jwt = require('jsonwebtoken')
 var nodemailer = require('nodemailer')
+require('dotenv/config')
 
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
 router.post('/', (req, res, next) => {
+
+  if (!(req.headers.api_key === process.env.API_KEY)) {
+    res.sendStatus(403)
+    return
+  }
+
   const employeeId = req.body.employee_id
   const password = req.body.password
-
-  console.log(req.body)
 
   const queryString = 'SELECT * FROM employee WHERE employee_id = ? AND password = ?'
   db.query(queryString, [employeeId, password], (err, rows, fields) => {
@@ -56,20 +61,16 @@ router.post('/sendEmail', (req, res) => {
     // port: 587,
     // secure: false, // true for 465, false for other ports
     auth: {
-      user: 'fakeunplugandthrive@gmail.com',
-      pass: 'FakeUnplugAndThrive'
+      user: process.env.GMAIL_ADDR,
+      pass: process.env.GMAIL_PASS
     }
-    // tls: {
-    //   rejectUnauthorized: false
-    // }
-  });
+  })
 
   // setup email data with unicode symbols
   let mailOptions = {
     from: 'fakeunplugandthrive@gmail.com', // sender address
     to: `${req.body.email}`, // list of receivers
     subject: `${req.body.subject}`, // Subject line
-    // text: "Hello world?", // plain text body
     html: req.body.html// html body
   }
 
