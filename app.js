@@ -15,6 +15,15 @@ var loginRouter = require('./routes/login')
 
 var app = express()
 
+var server = require('http').createServer(app)
+
+server.listen(10000, function (err) {
+  if (err) {
+    console.log(err)
+  }
+  console.log('listening on port 10000')
+})
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')

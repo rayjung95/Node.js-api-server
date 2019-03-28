@@ -94,11 +94,10 @@ router.post('/create', verifyToken, (req, res) => {
       const lastName = req.body.last_name
       const address = req.body.address
       const zipCode = req.body.zip
-      const phoneNumber = req.body.phone
+      var phoneNumber = req.body.phone
       if (req.body.phone.includes('-')) {
         phoneNumber = req.body.phone.replace(/-/g, '')
       }
-      
       const email = req.body.email
 
       const userName = (firstName[0] + lastName).toLowerCase()
@@ -133,7 +132,8 @@ router.get('/welcome/:id', verifyToken, (req, res) => {
       // SELECT name from SERVICE WHERE service_id = ?;
 
       const userID = req.params.id
-      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order JOIN service on service_order.service_id = service.service_id JOIN customer on customer.customer_id = service_order.customer_id WHERE employee_id = ?'
+      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order INNER JOIN service on service.service_id= service_order.service_id INNER JOIN customer on customer.customer_id = service_order.customer_id  WHERE employee_id = ? AND' +
+        ' service_order.status is null'
       db.query(queryString, [userID], (err, rows, fields) => {
         if (err) {
           console.log('Failed to query for service_orders: ' + err)
@@ -142,7 +142,7 @@ router.get('/welcome/:id', verifyToken, (req, res) => {
           return
         }
         console.log('I think we fetched it')
-        console.log(rows)
+        // console.log(rows)
         res.json(rows)
       })
     }

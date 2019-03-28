@@ -10,7 +10,6 @@ router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
 router.post('/', (req, res, next) => {
-
   if (!(req.headers.api_key === process.env.API_KEY)) {
     res.sendStatus(403)
     return

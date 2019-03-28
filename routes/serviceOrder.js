@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 var db = require('../db/db')
+var mail = require('./mail')
 
 // TODO:
 // CRUD done
@@ -96,6 +97,49 @@ router.post('/:order_id/edit', (req, res) => {
   })
 })
 
+router.post('/:order_id/close', async (req, res) => {
+  const orderId = req.params.order_id
+  const description = req.body.description
+  const openDnsUserName = req.body.openDnsUserName
+  const openDnsPassword = req.body.openDnsPassword
+  const QStudioUserName = req.body.QStudioUserName
+  const QStudioPassword = req.body.QStudioPassword
+  const status = req.body.status
+  const customerEmailAddress = req.body.customerEmail
+
+  console.log(orderId)
+  console.log(openDnsUserName)
+  console.log(openDnsPassword)
+  console.log(QStudioUserName)
+  console.log(QStudioPassword)
+  console.log(status)
+
+  const queryString = 'UPDATE service_order SET status = ?, openDnsUserName = ?, openDnsPass = ?, QStudioUserName = ?, QStudioPass = ?,  description = ? WHERE order_id = ?'
+  console.log(queryString)
+  await db.query(queryString, [status, openDnsUserName, openDnsPassword, QStudioUserName, QStudioPassword, description, orderId], (err, rows, fields) => {
+    if (err) {
+      console.log('Failed to query for service: ' + err)
+      console.log(err.message)
+      res.status(500).json(err)
+      res.end()
+      return
+    }
+    console.log(rows)
+    console.log('ServiceOrder is updated')
+  })
+  await mail.sendInstallationEmail(customerEmailAddress, openDnsUserName, openDnsPassword, QStudioUserName, QStudioPassword)
+
+    .then((mailResult) => {
+      console.log('Mail Info: ' + mailResult.message)
+      res.status(200).json({ status: 200 })
+    })
+
+    .catch(mailError => {
+      console.log('Mail Error: ' + mailError.message)
+      res.status(500).json({ status: 500, mailError: mailError.message })
+    })
+})
+
 // Get list of service orders that assigned to an employee
 router.get('/:employee_id/employee', (req, res) => {
   console.log('Fetching service with employee_id: ' + req.params.employee_id)
@@ -109,6 +153,12 @@ router.get('/:employee_id/employee', (req, res) => {
       res.end()
       return
     }
+
+    // if (rows.length != 1) {
+    //   res.json({error: "User with ID: " + userID + " not found."})
+    //   res.end()
+    // }
+
     console.log('I think we fetched it')
     res.status(200).json(rows)
   })
