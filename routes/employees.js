@@ -3,29 +3,7 @@ var router = express.Router()
 var generator = require('generate-password')
 var db = require('../db/db')
 var jwt = require('jsonwebtoken')
-/**
- *  TODO:
- *  Delete needs to be implemented
- */
-
-function verifyToken (req, res, next) {
-  // Get auth header value
-  const bearerHeader = req.headers['authorization']
-  // Check if bearer is undefined
-  if (typeof bearerHeader !== 'undefined') {
-    // Split at the space
-    const bearer = bearerHeader.split(' ')
-    // Get token from array
-    const bearerToken = bearer[1]
-    // Set the token
-    req.token = bearerToken
-    // Next middleware
-    next()
-  } else {
-    // Forbidden
-    res.sendStatus(403)
-  }
-}
+var verifyToken = require('../auth/verify.js')
 
 router.get('/', verifyToken, (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -73,7 +51,38 @@ router.get('/:id', verifyToken, (req, res) => {
   // res.end()
 })
 
-// Create Employee
+router.put('/update/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if (err) {
+      res.sendStatus(403)
+    } else {
+      console.log('Trying to update a user')
+
+      const userID = req.params.id
+      const firstName = req.body.first_name
+      const lastName = req.body.last_name
+      const address = req.body.address
+      const zipCode = req.body.zip_code
+      const phoneNumber = req.body.phone_number.replace(/-/g, '')
+      const email = req.body.email
+      const userName = null
+      const password = req.body.password
+
+      const queryString = 'UPDATE employee SET first_name = ?, last_name = ?, user_name = ?, password = ?, address = ?, zip = ?, phone = ?, email = ? WHERE employee_id = ?'
+
+      db.query(queryString, [firstName, lastName, userName, password, address, zipCode, phoneNumber, email, userID], (err, results, field) => {
+        if (err) {
+          console.log('Failed to update user: ' + err)
+          res.sendStatus(500)
+        }
+        console.log('Updated user with id: ', userID)
+        res.end()
+      })
+      res.end()
+    }
+  })
+})
+
 router.post('/create', verifyToken, (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
     if (err) {
@@ -84,8 +93,11 @@ router.post('/create', verifyToken, (req, res) => {
       const firstName = req.body.first_name
       const lastName = req.body.last_name
       const address = req.body.address
-      const zipCode = req.body.zip_code
-      const phoneNumber = req.body.phone_number.replace(/-/g, '')
+      const zipCode = req.body.zip
+      var phoneNumber = req.body.phone
+      if (req.body.phone.includes('-')) {
+        phoneNumber = req.body.phone.replace(/-/g, '')
+      }
       const email = req.body.email
 
       const userName = (firstName[0] + lastName).toLowerCase()
@@ -111,7 +123,6 @@ router.post('/create', verifyToken, (req, res) => {
 })
 
 router.get('/welcome/:id', verifyToken, (req, res) => {
-  console.log(req.params)
   jwt.verify(req.token, 'secretkey', (err, authData) => {
     if (err) {
       console.log(err)
@@ -121,7 +132,8 @@ router.get('/welcome/:id', verifyToken, (req, res) => {
       // SELECT name from SERVICE WHERE service_id = ?;
 
       const userID = req.params.id
-      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order JOIN service on service_order.service_id JOIN customer on service_order.customer_id  WHERE employee_id = ?'
+      const queryString = 'SELECT service_order.order_id, customer.*, service.*, service_order.service_id, service_order.customer_id, service_order.scheduled from service_order INNER JOIN service on service.service_id= service_order.service_id INNER JOIN customer on customer.customer_id = service_order.customer_id  WHERE employee_id = ? AND' +
+        ' service_order.status is null'
       db.query(queryString, [userID], (err, rows, fields) => {
         if (err) {
           console.log('Failed to query for service_orders: ' + err)
@@ -130,7 +142,7 @@ router.get('/welcome/:id', verifyToken, (req, res) => {
           return
         }
         console.log('I think we fetched it')
-        console.log(rows)
+        // console.log(rows)
         res.json(rows)
       })
     }

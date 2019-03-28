@@ -3,7 +3,7 @@
  * @param  {json} res - response params
  * @param  {middleware} next - next middleware to use
  */
-function verifyToken (req, res, next) {
+var verifyToken = function verifyToken (req, res, next) {
   // Get auth header value
   const bearerHeader = req.headers['authorization']
   // Check if bearer is undefined
@@ -22,4 +22,4 @@ function verifyToken (req, res, next) {
   }
 }
 
-module.exports = verifyToken()
+module.exports = verifyToken
