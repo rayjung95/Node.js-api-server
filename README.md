@@ -29,9 +29,7 @@ npm start
 By default, this app will use a file watcher [nodemon](https://nodemon.io/) and will be accessible from the URL: http://localhost:8080.
 
 ## Endpoints
-Documentation can be found [here](https://documenter.getpostman.com/view/2189122/S17wNS8v)
-
-
+Node.js API Documentation can be found [PostMan Doc](https://documenter.getpostman.com/view/2189122/S17wNS8v)
 
 
 ## Code Quality
