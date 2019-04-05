@@ -1,6 +1,6 @@
 {
     "connectionLimit": 10,
-    "host": "a01026675-test-db.cf9zyau6meiw.us-west-2.rds.amazonaws.com",
+    "host": "node.cf9zyau6meiw.us-west-2.rds.amazonaws.com",
     "user": "node",
     "password": "password",
     "database": "unplug_and_thrive"
